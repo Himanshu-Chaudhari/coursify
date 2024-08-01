@@ -1,11 +1,10 @@
 import express from 'express'
 import { users ,admins , courses } from '../model/db.js'
 import jwt from 'jsonwebtoken'
-import { AdminAuthentication , UserAuthentication , AdminSecretKey , UserSecretKey} from '../auth/auth.js'
+import { AdminAuthentication} from '../auth/auth.js'
 export const adminRouter = express.Router()
 
 adminRouter.post('/signup',async (req,res)=>{
-    // Admin sign up
     let username=req.headers.username;
     let password=req.headers.password;
     console.log('here')
@@ -17,22 +16,19 @@ adminRouter.post('/signup',async (req,res)=>{
     else{
         let newAdmin = new admins({username,password})
         await newAdmin.save()
-        let key=jwt.sign({newAdmin},AdminSecretKey)
-
+        let key=jwt.sign({newAdmin},process.env.ADMIN_SECRET_KEY)
         return res.status(200).json({"message":"Admin created successfully with token ",'token':key})
     }
 })
 
-
 adminRouter.post('/login' ,async (req,res)=>{
-    // Admin login
     let username=req.headers.username
     const admin = await admins.findOne({ username })
     if(admin){
         if(admin.password != req.headers.password){
             return res.status(203).json({"message" : "Wrong Password"})
         }
-        let key=jwt.sign({admin},AdminSecretKey)
+        let key=jwt.sign({admin},process.env.ADMIN_SECRET_KEY)
         return res.status(200).json({"message":"Admin found",'token':key})
     }else{
         res.status(204).send('Admin Not Found')
@@ -49,7 +45,6 @@ adminRouter.post('/courses',AdminAuthentication, async (req,res)=>{
 })
 
 adminRouter.post('/courses/:courseId',AdminAuthentication, async (req,res)=>{
-    //logic to edit a course
     let course= await courses.findByIdAndUpdate(req.params.courseId , req.body , { new : true } )
     if(course){
         console.log(course)
@@ -69,11 +64,4 @@ adminRouter.delete('/courses/:courseId',AdminAuthentication,async(req,res)=>{
     let response= await courses.findByIdAndDelete(req.params.courseId)
     console.log(response);
     return res.json({"message":"Couse Deleted"})
-    // if(course){
-    //     console.log(course)
-    //     res.send("Course updated successfully ")
-    // }
-    // else{
-    //     res.status(403).send("Course not found ")
-    // }
 })

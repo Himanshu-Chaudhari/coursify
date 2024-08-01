@@ -1,10 +1,9 @@
+
 import jwt from "jsonwebtoken"
-export const AdminSecretKey="AdminSecretKey"
-export const UserSecretKey="UserSecretKey"
 export const AdminAuthentication = (req,res,next) => {
     let key=req.headers.key
     if(key){
-        jwt.verify(key,AdminSecretKey,(err,user)=>{
+        jwt.verify(key,process.env.ADMIN_SECRET_KEY,(err,user)=>{
             if(err){
                 res.send(err)
             }
@@ -19,7 +18,7 @@ export const AdminAuthentication = (req,res,next) => {
 export const UserAuthentication=(req,res,next)=>{
     let key=req.headers.key
     if(key){
-        jwt.verify(key,UserSecretKey,(err,user)=>{
+        jwt.verify(key,process.env.USER_SECRET_KEY,(err,user)=>{
             if(err){
                 res.send(err)
             }
