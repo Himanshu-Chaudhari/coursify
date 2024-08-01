@@ -39,7 +39,7 @@ export default function UserCourse() {
                 {
                     courses.map((element) => {
                         return (
-                            <div className="h-auto max-w-full flex justify-center rounded-lg" key={element._id}>
+                            <div className="h-auto max-w-full flex justify-center rounded-lg" key={element._id} >
                                 <CourseUser course={element} hide={false} />
                             </div>
                         )

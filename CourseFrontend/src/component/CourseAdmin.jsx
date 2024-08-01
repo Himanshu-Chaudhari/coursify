@@ -10,7 +10,7 @@ export default function CourseAdmin(props) {
         </div>
         <p className="mb-3 font-normal text-gray-300 ">{props.course.description?props.course.description.slice(0,30):" "}...</p>
         <div className="w-full h-48">
-          <img src={props.course.imageLink} alt="No image" className="w-full h-full object-cover" />
+          <img object-fit src={props.course.imageLink} alt="No image" className="w-full h-full object-cover" />
         </div>
         <p className="p-2 pb-1 font-normal text-gray-200 "> Price:- &#8377; {props.course.price}</p>
         <div className={`${props.hide ? 'hidden' : ''} mt-2 inline-flex items-center text-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600`} onClick={() => {

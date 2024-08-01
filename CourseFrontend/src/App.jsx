@@ -20,7 +20,7 @@ function App() {
       <RecoilRoot>
         <Router>
           <Routes>
-            <Route path='/' element={<><NavBar/><Home/></>} />
+            <Route path='/' element={<><Home/></>} />
             <Route path='/signup' element={<><NavBar/><Credentials></Credentials></>}/>
             <Route path='/courseUser' element={ <><NavBar/><CoursesUser/></>}/>
             <Route path='/purchasedCourse' element={ <><NavBar/><UserPurchasedCourse/></>}/>

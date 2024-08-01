@@ -31,10 +31,10 @@ export default function Credentials() {
                         </div>
                         
                         <button onClick={()=>{if(!username.match(validRegex)){alert('Enter Valid Email')}
-                        else{toggle=='signup'?response=signUpUser(username,password,navigate):response=loginUser(username,password,navigate,setWho)}}} className="w-full text-white bg-blue-500 hover:bg-blue-700  font-medium rounded-lg text-sm px-5 py-2.5 text-center ">{toggle=='signup' ? 'Create Account as User' : "Login as User"}</button>
+                        else{toggle=='signup'?response=signUpUser(username,password,navigate,setWho):response=loginUser(username,password,navigate,setWho)}}} className="w-full text-white bg-blue-500 hover:bg-blue-700  font-medium rounded-lg text-sm px-5 py-2.5 text-center ">{toggle=='signup' ? 'Create Account as User' : "Login as User"}</button>
 
                         <button onClick={()=>{if(!username.match(validRegex)){alert('Enter Valid Email')}
-                        else{ toggle=='signup'?response=signUpAdmin(username,password,navigate):response=loginAdmin(username,password,navigate,setWho)}}} className="w-full text-white bg-blue-500 hover:bg-blue-700  font-medium rounded-lg text-sm px-5 py-2.5 text-center ">{toggle=='signup' ? 'Create Account as Admin' : "Login as Admin"}</button>
+                        else{ toggle=='signup'?response=signUpAdmin(username,password,navigate,setWho):response=loginAdmin(username,password,navigate,setWho)}}} className="w-full text-white bg-blue-500 hover:bg-blue-700  font-medium rounded-lg text-sm px-5 py-2.5 text-center ">{toggle=='signup' ? 'Create Account as Admin' : "Login as Admin"}</button>
                         
                         <p className="text-sm font-light text-gray-500 ">
                             {toggle=='signup' ? 'Already have an account ? ' : "Don't have an Account ? "}

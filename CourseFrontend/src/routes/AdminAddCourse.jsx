@@ -1,7 +1,9 @@
 
 import React from 'react'
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 export default function AdminAddCourse() {
+  const navigate=useNavigate()
   let [title, setTitle] = useState('')
   let [description, setDescription] = useState('')
   let [price, setPrice] = useState()
@@ -78,6 +80,7 @@ export default function AdminAddCourse() {
                   alert("Enter Proper Credentials")
                   return;
                 }
+                try{
                 await fetch(import.meta.env.VITE_API_URL+'/admin/courses', {
                   method: 'POST',
                   headers: {
@@ -97,9 +100,14 @@ export default function AdminAddCourse() {
                   }
                   else {
                     alert('Course Added')
+                    navigate('/adminViewCourse')
                   }
                 })
-              }}
+              }catch(error){
+                console.log(error)
+              }
+            }
+            }
             >
               Add Course
             </button>

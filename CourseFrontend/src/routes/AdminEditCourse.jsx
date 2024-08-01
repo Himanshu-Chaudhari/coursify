@@ -2,9 +2,10 @@ import React from 'react'
 import { useState } from 'react'
 import { useRecoilValue } from 'recoil'
 import { adminCourses } from '../atmos/courseState'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 export default function AdminEditCourse() {
   let courses=useRecoilValue(adminCourses)
+  const navigate=useNavigate()
   const {id}=useParams('id')
   let course=courses.filter((element)=>{ return element._id==id})
   let [title, setTitle] = useState(course[0].title)
@@ -108,12 +109,13 @@ export default function AdminEditCourse() {
                     alert("Course Id already present")
                   }
                   else {
-                    alert('Update')
+                    alert('Course Updated')
+                    navigate('/adminViewCourse')
                   }
                 })
               }}
             >
-              Add Course
+              Update Course
             </button>
           </div>
         </div>

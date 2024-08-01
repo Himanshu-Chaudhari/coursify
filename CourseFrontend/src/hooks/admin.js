@@ -1,5 +1,5 @@
 import axios from "axios"
-export function signUpAdmin( username ,password,navigate) {
+export function signUpAdmin( username ,password,navigate,setWho) {
     console.log(username , password)
     if(username=='' | password==''){
         alert('Invalid Input')
@@ -19,15 +19,14 @@ export function signUpAdmin( username ,password,navigate) {
             }
             localStorage.setItem('tokenAdmin',res.data.token)
             alert('Admin Created')
-            navigate('/courseAdmin')
+            setWho('admin')
+            navigate('/adminAfterLogin')
         })
     }catch(err){
         console.log('This is err',err)
     }
 }
-
-
-export function loginAdmin( username ,password,navigate) {
+export function loginAdmin( username ,password,navigate,setWho) {
     console.log(username , password)
     if(username=='' | password==''){
         alert('Invalid Input')
@@ -51,8 +50,8 @@ export function loginAdmin( username ,password,navigate) {
             }
             localStorage.setItem('tokenAdmin',res.data.token)
             alert('Logged in as Admmin')
-           
-            navigate('/courseAdmin')
+            setWho('admin')
+            navigate('/adminAfterLogin')
         })
     }catch(err){
         console.log('This is err',err)

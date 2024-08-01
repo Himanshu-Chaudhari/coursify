@@ -4,9 +4,6 @@ import CourseAdmin from '../component/CourseAdmin'
 import { useRecoilValue } from 'recoil'
 export default function AdminViewCourse() {
   const course=useRecoilValue(adminCourses)
-//   if(course.length==0){
-//       console.log(0)
-//   }
   return (
     <div className='p-6 grid grid-cols-3'>
           {
