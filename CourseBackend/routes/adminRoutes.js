@@ -14,9 +14,9 @@ adminRouter.post('/signup',async (req,res)=>{
         res.status(203).send('Admin already exists')
     }
     else{
-        let newAdmin = new admins({username,password})
-        await newAdmin.save()
-        let key=jwt.sign({newAdmin},process.env.ADMIN_SECRET_KEY)
+        let admin = new admins({username,password})
+        await admin.save()
+        let key=jwt.sign({admin},process.env.ADMIN_SECRET_KEY)
         return res.status(200).json({"message":"Admin created successfully with token ",'token':key})
     }
 })
@@ -37,8 +37,9 @@ adminRouter.post('/login' ,async (req,res)=>{
 
 adminRouter.post('/courses',AdminAuthentication, async (req,res)=>{
     let body=req.body
-    body.admin=req.user.newAdmin.username;
-    const course= new courses(body)
+    console.log("Admin ",req.user)
+    body.admin=req.user.admin.username;
+    const course = new courses(body)
     await course.save()
     console.log(course)
     res.json({message : 'Course Added with id :- ' , courseId : course.id})
@@ -56,7 +57,7 @@ adminRouter.post('/courses/:courseId',AdminAuthentication, async (req,res)=>{
 }) 
 
 adminRouter.get('/courses',AdminAuthentication, async (req,res)=>{
-    const course = await courses.find({admin : req.user.newAdmin.username}).populate();
+    const course = await courses.find({admin : req.user.admin.username}).populate();
     res.json({ "courses" : course})
 })
 

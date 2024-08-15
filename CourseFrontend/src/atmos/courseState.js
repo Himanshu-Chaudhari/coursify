@@ -5,6 +5,11 @@ export const who=atom({
     default:'user',
 })
 
+export const isLogedin=atom({
+    key : 'isLoggedIn',
+    default : false
+})
+
 export const purchasedCourse=atom({
     key:'purchasedCourses',
     default:[],

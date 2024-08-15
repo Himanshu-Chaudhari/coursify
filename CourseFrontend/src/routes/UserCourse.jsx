@@ -31,16 +31,16 @@ export default function UserCourse() {
             <div className='text-4xl p-9 pb-2 flex text-center justify-center font-bold leading-9 tracking-tight text-gray-700 basis-4/5'>
                 Hello, Welcome to Coursify, Best Place to Upgrade
             </div>
-            <div className='m-9 mt-2 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4'>
-                <div className='col-start-1 sm:col-start-2'></div>
+            <div className='m-9 mt-2 grid grid-cols-1 lg:grid-cols-4 sm:grid-cols-1 md:grid-cols-2 gap-10'>
+                <div className='col-start-1 sm:col-start-3'></div>
                 <div className='flex justify-between md:justify-end'>
                     <button onClick={() => getPurchasedCourses(navigate, setPurchaseCourse)} className='p-3 w-fit h-fit shadow-sm rounded-md bg-blue-500 hover:bg-blue-700 text-center text-white'>My Purchased Courses</button>
                 </div>
                 {
-                    courses.map((element) => {
+                    courses.map((element,index) => {
                         return (
-                            <div className="h-auto max-w-full flex justify-center rounded-lg" key={element._id} >
-                                <CourseUser course={element} hide={false} />
+                            <div className="h-auto max-w-full flex justify-center rounded-lg" key={index} >
+                                <CourseUser course={element} hide={false} key={element._id}/>
                             </div>
                         )
                     })

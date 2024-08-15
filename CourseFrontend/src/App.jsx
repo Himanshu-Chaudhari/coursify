@@ -13,6 +13,7 @@ import Credentials from './routes/Credentials'
 import UserPurchasedCourse from './routes/UserPurchasedCourse'
 import AdminViewCourse from './routes/AdminViewCourses'
 import AdminEditCourse from './routes/AdminEditCourse'
+import CourseDisplay from './component/CourseDisplay'
 
 function App() {
   return (
@@ -28,6 +29,7 @@ function App() {
             <Route path='/adminAfterLogin' element={ <><NavBar/><br/><br/><AdminAfterLogin/></>}/>
             <Route path='/adminViewCourse' element={ <><NavBar/><br/><br/><AdminViewCourse/></>}/>
             <Route path='/adminEditCourse/:id' element={ <><NavBar/><br/><br/><AdminEditCourse/></>}/>
+            <Route path='/showCourse/:id' element={ <><NavBar/><br/><br/><CourseDisplay/></>}/>
           </Routes>
         </Router>
       </RecoilRoot>

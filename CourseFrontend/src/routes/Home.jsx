@@ -127,7 +127,7 @@ export default function Home() {
 
 function Button() {
   const navigate = useNavigate()
-  return <div>
+  return <div className='m-2'>
     <button className='mt-2 p-2 text-xl bg-green-500 rounded-md' onClick={() => {
       navigate(`/signup`)
     }}>

@@ -1,12 +1,14 @@
 import axios from "axios"
+
 export function signUpAdmin( username ,password,navigate,setWho) {
     console.log(username , password)
+
     if(username=='' | password==''){
         alert('Invalid Input')
         return
     }
     try{
-        axios.post('http://localhost:3000/admin/signup',{},{
+        axios.post(`${import.meta.env.VITE_API_URL}/admin/signup`,{},{
             headers: {
                 'Content-Type' : 'application/json',
                 'username' : username,
@@ -18,14 +20,15 @@ export function signUpAdmin( username ,password,navigate,setWho) {
                 return
             }
             localStorage.setItem('tokenAdmin',res.data.token)
+            localStorage.setItem('who',"admin")
             alert('Admin Created')
-            setWho('admin')
             navigate('/adminAfterLogin')
         })
     }catch(err){
         console.log('This is err',err)
     }
 }
+
 export function loginAdmin( username ,password,navigate,setWho) {
     console.log(username , password)
     if(username=='' | password==''){
@@ -33,7 +36,7 @@ export function loginAdmin( username ,password,navigate,setWho) {
         return
     }
     try{
-        axios.post('http://localhost:3000/admin/login',{},{
+        axios.post(`${import.meta.env.VITE_API_URL}/admin/login`,{},{
             headers: {
                 'Content-Type' : 'application/json',
                 'username' : username,
@@ -49,8 +52,8 @@ export function loginAdmin( username ,password,navigate,setWho) {
                 return
             }
             localStorage.setItem('tokenAdmin',res.data.token)
-            alert('Logged in as Admmin')
-            setWho('admin')
+            localStorage.setItem('who',"admin")
+            alert('Logged in as Admin')
             navigate('/adminAfterLogin')
         })
     }catch(err){

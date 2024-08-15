@@ -124,7 +124,7 @@ export default function SignUp() {
             return;
         }
 
-        const url = isAdmin ? 'http://localhost:3000/admin/signup' : 'http://localhost:3000/user/signup';
+        const url = isAdmin ? `${import.meta.env.VITE_API_URL}/admin/signup` : `${import.meta.env.VITE_API_URL}http://localhost:3000/user/signup`;
         const headers = {
             'Content-Type': 'application/json',
             'username': username,

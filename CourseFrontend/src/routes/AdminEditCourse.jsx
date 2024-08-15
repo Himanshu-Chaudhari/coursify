@@ -1,17 +1,13 @@
 import React from 'react'
 import { useState } from 'react'
-import { useRecoilValue } from 'recoil'
-import { adminCourses } from '../atmos/courseState'
 import { useNavigate, useParams } from 'react-router-dom'
 export default function AdminEditCourse() {
-  let courses=useRecoilValue(adminCourses)
   const navigate=useNavigate()
   const {id}=useParams('id')
-  let course=courses.filter((element)=>{ return element._id==id})
-  let [title, setTitle] = useState(course[0].title)
-  let [description, setDescription] = useState(course[0].description)
-  let [price, setPrice] = useState(course[0].price)
-  let [img, setImg] = useState(course[0].img)
+  let [title, setTitle] = useState()
+  let [description, setDescription] = useState()
+  let [price, setPrice] = useState()
+  let [img, setImg] = useState()
   return (
     <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-10 lg:px-8">
       <div className="">
@@ -29,7 +25,7 @@ export default function AdminEditCourse() {
               Course Title
             </label>
             <div className="mt-2">
-              <input required name="username" placeholder={`${title}`} autoComplete="username" className="block w-full rounded-md border-2 border-gray-300 p-2 text-gray-900 shadow-sm focus:outline-none focus:border-gray-300 focus:ring-2 focus:ring-gray-300 sm:text-sm sm:leading-6 transition duration-200 ease-in-out"
+              <input required name="username" autoComplete="username" className="block w-full rounded-md border-2 border-gray-300 p-2 text-gray-900 shadow-sm focus:outline-none focus:border-gray-300 focus:ring-2 focus:ring-gray-300 sm:text-sm sm:leading-6 transition duration-200 ease-in-out"
                 onChange={(e) => {
                   setTitle(e.target.value)
                   console.log(title)
@@ -44,16 +40,11 @@ export default function AdminEditCourse() {
               </label>
             </div>
             <div className="mt-2">
-              <input
-                type="text"
-                required
-                placeholder={`${description}`}
-                className="block w-full  rounded-md border-2 border-gray-300 p-2 text-gray-900 shadow-sm focus:outline-none focus:border-gray-300 focus:ring-2 focus:ring-gray-300 sm:text-sm sm:leading-6 transition duration-200 ease-in-out"
+              <input type="text" required className="block w-full  rounded-md border-2 border-gray-300 p-2 text-gray-900 shadow-sm focus:outline-none focus:border-gray-300 focus:ring-2 focus:ring-gray-300 sm:text-sm sm:leading-6 transition duration-200 ease-in-out"
                 onChange={(e) => {
                   setDescription(e.target.value)
                   console.log(description)
                 }} />
-
             </div>
           </div>
           <div>
@@ -63,7 +54,7 @@ export default function AdminEditCourse() {
               </label>
             </div>
             <div className="mt-2">
-              <input type="number" required placeholder={`${price}`} className="block w-full rounded-md border-2 border-gray-300 p-2 text-gray-900 shadow-sm focus:outline-none focus:border-gray-300 focus:ring-2 focus:ring-gray-300 sm:text-sm sm:leading-6 transition duration-200 ease-in-out6" onChange={(e) => {
+              <input type="number" required className="block w-full rounded-md border-2 border-gray-300 p-2 text-gray-900 shadow-sm focus:outline-none focus:border-gray-300 focus:ring-2 focus:ring-gray-300 sm:text-sm sm:leading-6 transition duration-200 ease-in-out6" onChange={(e) => {
                 setPrice(e.target.value)
                 console.log(price)
               }} />
@@ -91,7 +82,7 @@ export default function AdminEditCourse() {
                   alert("Enter Proper Credentials")
                   return;
                 }
-                await fetch(import.meta.env.VITE_API_URL+'/admin/courses', {
+                await fetch(import.meta.env.VITE_API_URL+`/admin/courses/${id}`, {
                   method: 'POST',
                   headers: {
                     'Content-Type': 'application/json',

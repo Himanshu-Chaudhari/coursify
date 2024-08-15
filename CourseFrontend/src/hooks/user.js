@@ -1,5 +1,5 @@
 import axios from "axios"
-import Razorpay from 'razorpay'
+
 export function signUpUser(username, password, navigate, setwho) {
     console.log(username, password)
     if (username == '' | password == '') {
@@ -19,6 +19,7 @@ export function signUpUser(username, password, navigate, setwho) {
                 return
             }
             localStorage.setItem('tokenUser', res.data.token)
+            localStorage.setItem('who',"user")
             console.log(import.meta.env.VITE_API_URL)
             alert('User Created')
             setwho('user')
@@ -54,6 +55,7 @@ export function loginUser(username, password, navigate, setwho) {
                 return
             }
             localStorage.setItem('tokenUser', res.data.token)
+            localStorage.setItem('who',"user")
             alert('Logged in as user')
             setwho('user')
             navigate('/courseUser')
@@ -79,48 +81,66 @@ const loadRazorpayScript = () => {
 
 const makePayment = async (amount) => {
     const isScriptLoaded = await loadRazorpayScript();
-
     if (!isScriptLoaded) {
         alert('Razorpay SDK failed to load. Are you online?');
         return;
     }
-
     try {
-        const { data: { order } } = await axios.post(`${import.meta.env.VITE_API_URL}/user/checkout`, {
-            amount: amount
-        });
-
-        const { data: { key } } = await axios.get(`${import.meta.env.VITE_API_URL}/user/getkey`);
-
-        const options = {
-            key: key,
-            amount: amount,
-            currency: "INR",
-            name: "Himanshu Chaudhari",
-            description: "Test Transaction",
-            image: "https://example.com/your_logo",
-            order_id: order.id,
-            prefill: {
-                name: "Gaurav Kumar",
-                email: "gaurav.kumar@example.com",
-                contact: "9000090000"
-            },
-            notes: {
-                address: "Razorpay Corporate Office"
-            },
-            theme: {
-                color: "#3399cc"
+        const { data: { order } } = await axios.post(`${import.meta.env.VITE_API_URL}/user/checkout`,{amount: amount},{
+            headers: {
+                'Content-Type': 'application/json',
+                'key': localStorage.getItem('tokenUser')
             }
-        };
-
-        const rzp1 = new window.Razorpay(options);
-        rzp1.open();
-
+        });
+        console.log('Order:', order);
+        const { data: { key } } = await axios.get(`${import.meta.env.VITE_API_URL}/user/getkey`);
+        console.log('Key:', key);
         return new Promise((resolve, reject) => {
+            const options = {
+                key: key,
+                amount: amount * 100,
+                currency: "INR",
+                name: "Himanshu Chaudhari",
+                description: "Test Transaction",
+                image: "https://example.com/your_logo",
+                order_id: order.id,
+                handler: async (response) => {
+                    console.log('Payment successful, response:', response);
+                    try {
+                        const verifyUrl = `${import.meta.env.VITE_API_URL}/user/paymentverification`;
+                        const { data } = await axios.post(verifyUrl, response,{
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'key': localStorage.getItem('tokenUser')
+                            }
+                        });
+                        console.log('Verification response:', data);
+                        resolve(response); 
+                    } catch (error) {
+                        console.log('Error in payment verification:', error);
+                        reject(error); 
+                    }
+                },
+                prefill: {
+                    name: "Gaurav Kumar",
+                    email: "gaurav.kumar@example.com",
+                    contact: "9000090000"
+                },
+                notes: {
+                    address: "Razorpay Corporate Office"
+                },
+                theme: {
+                    color: "#3399cc"
+                }
+            };
+            const rzp1 = new window.Razorpay(options);
+            rzp1.open();
             rzp1.on('payment.success', (response) => {
+                console.log('Payment success:', response);
                 resolve(response);
             });
             rzp1.on('payment.error', (response) => {
+                console.log('Payment error:', response);
                 reject(response);
             });
         });
@@ -132,24 +152,30 @@ const makePayment = async (amount) => {
 
 export async function purchaseCourse(id, price) {
     try {
-        // Wait for the payment to complete
-        console.log('Starting payment process...');
-        await makePayment(price);
-        console.log('Payment successful, proceeding with course purchase...');
-        const response = await fetch(`${import.meta.env.VITE_API_URL}/user/course/${id}`, {
-            method: 'POST',
+        const data =await axios.get(import.meta.env.VITE_API_URL + '/user/purchasedCourses', {
             headers: {
                 'Content-Type': 'application/json',
                 'key': localStorage.getItem('tokenUser')
             }
-        });
-        if (response.status === 206) {
+        })
+        console.log(data.data.purchasedCourses)
+        if(data.data.purchasedCourses.find((ele)=>ele._id===id)){
             alert('You have already purchased this course'); 
-        } else {
-            alert('Course Purchased');
+            return;
         }
-        const data = await response.json();
-        console.log(data);
+        console.log('Starting payment process...');
+        const res = await makePayment(price);
+        console.log(res.data)
+        console.log('Payment successful, proceeding with course purchase...');
+        const response = await axios.post(`${import.meta.env.VITE_API_URL}/user/course/${id}`,{},{
+                headers: {
+                    'Content-Type': 'application/json',
+                    'key': localStorage.getItem('tokenUser'),
+                }
+            }
+        );
+        console.log(response.data);
+        alert('Course Purchased');
     } catch (error) {
         console.error('Error in purchasing course:', error);
         alert('An error occurred during the course purchase process. Please try again.');

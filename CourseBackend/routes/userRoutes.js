@@ -1,8 +1,9 @@
 import express from 'express'
 import { UserAuthentication} from '../auth/auth.js'
-import { users , courses } from '../model/db.js'
+import { users , courses, transaction } from '../model/db.js'
 import jwt from 'jsonwebtoken'
 import razorpay from 'razorpay'
+import crypto from 'crypto'
 export const userRouter = express.Router()
 
 userRouter.post('/signup', async (req,res)=>{
@@ -14,9 +15,9 @@ userRouter.post('/signup', async (req,res)=>{
     }
     else{
         try{
-            const newUser = new users({username : username , password : password})
-            await newUser.save()
-            let key=jwt.sign({newUser},process.env.USER_SECRET_KEY)
+            const user = new users({username : username , password : password})
+            await user.save()
+            let key=jwt.sign({user},process.env.USER_SECRET_KEY)
             return res.status(200).json({"message":"User created successfully with token ",'token':key})
         }catch(err){
             console.log(err)
@@ -27,7 +28,8 @@ userRouter.post('/signup', async (req,res)=>{
 
 userRouter.post('/login',async(req,res)=>{
     // logic to login user
-    let user=await users.findOne({username : req.user.username, password : req.user.password})
+    console.log(req.username)
+    let user=await users.findOne({username : req.headers.username, password : req.headers.password})
     if(user){
         let key=jwt.sign({user},process.env.USER_SECRET_KEY)
         return res.status(200).json({"message":"User Found",'token':key})
@@ -51,7 +53,7 @@ userRouter.post('/course/:courseId',UserAuthentication,async (req,res)=>{
         if (!course) {
             return res.status(204).json({"message":"Course not found"});
         }
-        const user = await users.findOne({ username: req.user.newUser.username});
+        const user = await users.findOne({ username: req.user.user.username});
         if (!user) {
             return res.status(205).json({"message":"User not found"});
         }
@@ -71,9 +73,8 @@ userRouter.post('/course/:courseId',UserAuthentication,async (req,res)=>{
 
 userRouter.get('/purchasedCourses',UserAuthentication,async (req,res)=>{
     // logic to return all purchased courses
-    console.log(req.user.newUser.username)
-    let user=await users.findOne({username : req.user.newUser.username}).populate('purchasedCourses')
-    console.log(user.purchasedCourses)
+    console.log(req.user.user.username)
+    let user=await users.findOne({username : req.user.user.username}).populate('purchasedCourses')
     if(user){
         return res.json({purchasedCourses : user.purchasedCourses || []})
     }
@@ -87,22 +88,44 @@ const instance = new razorpay({
     key_secret : '9Q3nVuZoAvbT2T3vq7MFuJ3y',
 })
 
-
-userRouter.post("/checkout",async (req,res)=>{
+userRouter.post("/checkout",UserAuthentication,async (req,res)=>{
     try {
         const options = {
             amount: req.body.amount*100,
             currency: "INR"
         };
         const order = await instance.orders.create(options);
-        console.log(order);
-        res.json({
+        res.status(200).json({
             success: true,
             order,
         });
     } catch (error) {
         console.error("Error creating order:", error);
         res.status(500).send("Internal Server Error");
+    }
+})
+
+userRouter.post('/paymentverification',UserAuthentication,async (req,res)=>{
+    // console.log(req.body)
+    const { razorpay_order_id, razorpay_payment_id, razorpay_signature } =req.body;
+    const body = razorpay_order_id + "|" + razorpay_payment_id;
+    const expectedSignature = crypto.createHmac("sha256", process.env.RAZORPAY_SECRET).update(body.toString()).digest("hex");
+    const isAuthentic = expectedSignature === razorpay_signature;
+    if (isAuthentic) {
+        // Database comes here
+        await transaction.create({
+            User : req.user.user.username,
+            razorpay_order_id : razorpay_order_id,
+            razorpay_payment_id : razorpay_payment_id,
+            razorpay_signature : razorpay_signature
+        });
+        res.status(200).json({
+            success: true
+        });
+    } else {
+        res.status(400).json({
+        success: false,
+        });
     }
 })
 
