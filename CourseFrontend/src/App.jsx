@@ -1,5 +1,4 @@
 
-import SignUp from './routes/SignUp'
 import './App.css'
 import NavBar from './component/NavBar'
 import CoursesUser from './routes/UserCourse'

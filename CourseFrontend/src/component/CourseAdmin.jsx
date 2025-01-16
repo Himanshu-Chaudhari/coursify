@@ -5,7 +5,7 @@ export default function CourseAdmin(props) {
     <div className="w-80 h-96 max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
       <div className="p-5 h-full">
         <div>
-          <h5  className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">{props.course.title}</h5>
+          <h5  className="mb-2 text-2xl font-bold tracking-tight text-blue-700 dark:text-white">{props.course.title}</h5>
         </div>
         <p className="mb-3 font-normal text-gray-300 ">{props.course.description?props.course.description.slice(0,30):" "}...</p>
         <div className="w-full h-48">
